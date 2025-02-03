@@ -52,10 +52,10 @@ st.markdown("""
         }
         /* Reduz a margem dos componentes metric para diminuir o espaço */
         [data-testid="stMetricValue"] {
-            margin-top: 5px; /* ajuste esse valor conforme desejado */
+            margin-top: 5px;
         }
         [data-testid="stMetricDelta"] {
-            margin-top: 5px; /* ajuste esse valor conforme desejado */
+            margin-top: 5px;
         }
     </style>
 """, unsafe_allow_html=True)
