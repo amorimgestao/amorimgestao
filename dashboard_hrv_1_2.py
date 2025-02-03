@@ -26,7 +26,7 @@ st.markdown("""
             display: inline-block;
             cursor: pointer;
             color: #4a90e2;
-            font-size: 18px;
+            font-size: 9px;
             margin-top: -5px;
         }
         .tooltip .tooltiptext {
