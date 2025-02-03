@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 
-# =========================
+# =============================================================================
 # Configuração da Página
-# =========================
+# =============================================================================
 st.set_page_config(page_title="Dashboard HRV", layout="wide", page_icon=":bar_chart:")
 
-# CSS customizado: fundo branco, visual limpo e estilo de tooltip (mouseover)
+# CSS customizado: fundo branco, visual limpo e estilo de tooltip com fonte de 9px
 st.markdown("""
     <style>
         body {
@@ -26,8 +26,8 @@ st.markdown("""
             display: inline-block;
             cursor: pointer;
             color: #4a90e2;
-            font-size: 9px;
-            margin-top: -5px;
+            font-size: 14px;
+            margin-left: 5px;
         }
         .tooltip .tooltiptext {
             visibility: hidden;
@@ -36,15 +36,15 @@ st.markdown("""
             color: #fff;
             text-align: left;
             border-radius: 6px;
-            padding: 8px;
+            padding: 5px;
             position: absolute;
             z-index: 1;
-            bottom: 125%; /* Posiciona acima do ícone */
+            bottom: 125%; /* posiciona acima do ícone */
             left: 50%;
             margin-left: -125px;
             opacity: 0;
             transition: opacity 0.3s;
-            font-size: 13px;
+            font-size: 9px; /* fonte de 9px conforme solicitado */
         }
         .tooltip:hover .tooltiptext {
             visibility: visible;
@@ -55,15 +55,15 @@ st.markdown("""
 
 st.title("Dashboard HRV - Comparativo: Dezembro vs. Janeiro")
 
-# =========================
+# =============================================================================
 # Dados dos Indicadores
-# =========================
-# Cada métrica contém os valores de Dezembro (valor base) e de Janeiro (valor atual),
+# =============================================================================
+# Para cada métrica, definimos o valor de Dezembro (valor base) e de Janeiro (valor atual),
 # além da variação em reais e, quando aplicável, a variação percentual.
-# As regras de cores são:
-# - Para Receita e Juros Recebido (tipo "revenue"): aumento (delta positivo) é bom (verde) e queda é ruim (vermelho);
-# - Para os indicadores de custo (tipo "cost"): redução (delta negativo) é bom (verde, usando delta_color="inverse") e aumento é ruim (vermelho).
-# Observação: "Custo por Cliente" foi corrigido para R$ 205,45 em Janeiro. Em Dezembro, era de R$ 205,45 + R$ 76,99 = R$ 282,44.
+# Regras de cores:
+# - Para "Receita" e "Juros Recebido" (tipo "revenue"): aumento (delta positivo) é bom (verde); queda é ruim (vermelho).
+# - Para os indicadores de custo (tipo "cost"): redução (delta negativo) é bom (verde, usando delta_color="inverse"); aumento é ruim (vermelho).
+# Observação: "Custo por Cliente" foi corrigido para R$ 205,45 em Janeiro, ou seja, em Dezembro era de R$ 205,45 + R$ 76,99 = R$ 282,44.
 metrics = [
     {
         "name": "Receita",
@@ -102,7 +102,7 @@ metrics = [
         "delta_val": -76.99,
         "delta_perc": -27.25,
         "type": "cost",
-        "explanation": ("O Custo por Cliente é o valor médio gasto para atender cada cliente. Uma redução nesse indicador é positiva, "
+        "explanation": ("O Custo por Cliente é o valor médio gasto para atender cada cliente. Uma diminuição nesse indicador é positiva, "
                         "indicando maior eficiência no atendimento.")
     },
     {
@@ -121,7 +121,7 @@ metrics = [
         "delta_val": +15.73,
         "delta_perc": +11.32,
         "type": "cost",
-        "explanation": ("A Taxa Asaas é o valor cobrado pela plataforma de pagamentos. Embora seja um custo, uma redução nesta taxa é positiva, "
+        "explanation": ("A Taxa Asaas é o valor cobrado pela plataforma de pagamentos. Embora seja um custo, uma redução nessa taxa é positiva, "
                         "pois impacta menos nos resultados financeiros.")
     },
     {
@@ -141,8 +141,8 @@ metrics = [
         "delta_val": +204.00,
         "delta_perc": +312.5,
         "type": "revenue",
-        "explanation": ("Juros Recebidos são os valores extras obtidos dos encargos cobrados dos clientes inadimplentes. Um aumento neste valor é positivo, "
-                        "indicando mais dinheiro entrando, embora possa também sinalizar problemas de inadimplência.")
+        "explanation": ("Juros Recebidos são os encargos cobrados dos clientes inadimplentes, representando dinheiro extra que entra na empresa. "
+                        "Um aumento neste valor é positivo, indicando mais recursos, embora possa também sinalizar problemas de inadimplência.")
     }
 ]
 
@@ -153,7 +153,7 @@ def tooltip_html(text):
     return f'<span class="tooltip">ℹ️<span class="tooltiptext">{text}</span></span>'
 
 # =============================================================================
-# Exibição dos Cards com KPIs e Tooltip
+# Exibição dos Cards com KPIs e Tooltip ao lado do nome
 # =============================================================================
 st.markdown("### Principais Indicadores")
 
@@ -163,7 +163,11 @@ cols = st.columns(num_cols)
 
 for i, metric in enumerate(metrics):
     with cols[i % num_cols]:
-        # Formata os valores e variação:
+        # Monta o título com o nome do indicador e o tooltip ao lado
+        title_html = f"<span style='font-weight:bold;'>{metric['name']}</span> {tooltip_html(metric['explanation'])}"
+        st.markdown(title_html, unsafe_allow_html=True)
+        
+        # Formata os valores e a variação:
         if metric["name"] == "% Custo Asaas":
             value_str = f"{metric['jan']:.2f}%"
             delta_str = f"{abs(metric['delta_val']):.2f}%"
@@ -178,15 +182,12 @@ for i, metric in enumerate(metrics):
             delta_display = f"{'-' if metric['delta_val'] < 0 else '+'}{delta_str}"
         
         # Define a lógica de cores:
-        # Para "revenue" (Receita e Juros Recebido): aumento (delta positivo) é bom → delta_color="normal"
-        # Para "cost" (demais): redução (delta negativo) é bom → delta_color="inverse"
         if metric["type"] == "revenue":
             delta_color = "normal"
         else:
             delta_color = "inverse"
         
-        # Exibe o card usando st.metric e, em seguida, a informação em mouseover (tooltip)
-        st.metric(label=metric["name"], value=value_str, delta=delta_display, delta_color=delta_color)
-        st.markdown(tooltip_html(metric["explanation"]), unsafe_allow_html=True)
+        # Exibe o valor e a variação usando st.metric com label vazio (pois o título já foi exibido acima)
+        st.metric(label="", value=value_str, delta=delta_display, delta_color=delta_color)
 
 st.markdown("<hr><p style='text-align: center; color: #666;'>Dashboard HRV © 2025</p>", unsafe_allow_html=True)
