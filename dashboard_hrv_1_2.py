@@ -193,4 +193,18 @@ for i, metric in enumerate(metrics):
         
         st.metric(label="", value=value_str, delta=delta_display, delta_color=delta_color)
 
+# =============================================================================
+# Gráfico de Receita por Mês
+# =============================================================================
+st.markdown("### Receita por Mês")
+# Dados de exemplo para receita por mês (ajuste conforme necessário)
+revenue_data = {
+    "Mês": ["Outubro", "Novembro", "Dezembro", "Janeiro"],
+    "Receita": [22000, 20000, 17897, 15191]
+}
+df_revenue = pd.DataFrame(revenue_data)
+fig = px.line(df_revenue, x="Mês", y="Receita", markers=True, title="Receita por Mês")
+fig.update_layout(title_font_color="#4a90e2", plot_bgcolor="white", paper_bgcolor="white")
+st.plotly_chart(fig, use_container_width=True)
+
 st.markdown("<hr><p style='text-align: center; color: #666;'>Dashboard HRV © 2025</p>", unsafe_allow_html=True)
