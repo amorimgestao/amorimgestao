@@ -7,7 +7,9 @@ import plotly.express as px
 # =============================================================================
 st.set_page_config(page_title="Dashboard HRV", layout="wide", page_icon=":bar_chart:")
 
-# CSS customizado: fundo branco, visual limpo, tooltip com fonte de 9px e redução de margem do st.metric
+# =============================================================================
+# CSS Customizado: Fundo branco, visual limpo, tooltip com fonte 9px e redução do espaçamento
+# =============================================================================
 st.markdown("""
     <style>
         body {
@@ -51,9 +53,9 @@ st.markdown("""
             visibility: visible;
             opacity: 1;
         }
-        /* Reduz o espaçamento entre o título e o st.metric */
-        [data-testid="stMetric"] {
-            margin-top: -40px;
+        /* Contêiner para título com tooltip: reduz o espaçamento entre o título e o st.metric */
+        .indicator-container {
+            margin-bottom: -10px;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -61,7 +63,7 @@ st.markdown("""
 st.title("Dashboard HRV - Comparativo: Dezembro vs. Janeiro")
 
 # =============================================================================
-# Dados dos Indicadores
+# Dados dos Indicadores (KPIs)
 # =============================================================================
 # Cada métrica possui:
 # - "dec": valor de Dezembro (valor base)
@@ -170,7 +172,7 @@ cols = st.columns(num_cols)
 for i, metric in enumerate(metrics):
     with cols[i % num_cols]:
         # Monta o título com o nome do indicador e o tooltip imediatamente ao lado, sem espaço extra
-        title_html = f"<span style='font-weight:bold;'>{metric['name']}</span>{tooltip_html(metric['explanation'])}"
+        title_html = f"<div class='indicator-container'><span style='font-weight:bold;'>{metric['name']}</span>{tooltip_html(metric['explanation'])}</div>"
         st.markdown(title_html, unsafe_allow_html=True)
         
         # Formata os valores e a variação:
@@ -188,8 +190,6 @@ for i, metric in enumerate(metrics):
             delta_display = f"{'-' if metric['delta_val'] < 0 else '+'}{delta_str}"
         
         # Define a lógica de cores:
-        # Para "revenue": aumento (delta positivo) é bom (verde) → delta_color="normal"
-        # Para "cost": redução (delta negativo) é bom (verde) → delta_color="inverse"
         delta_color = "normal" if metric["type"] == "revenue" else "inverse"
         
         st.metric(label="", value=value_str, delta=delta_display, delta_color=delta_color)
@@ -198,10 +198,9 @@ for i, metric in enumerate(metrics):
 # Gráfico de Receita por Mês
 # =============================================================================
 st.markdown("### Receita por Mês")
-# Dados de exemplo para receita por mês (ajuste conforme necessário)
 revenue_data = {
     "Mês": ["Outubro", "Novembro", "Dezembro", "Janeiro"],
-    "Receita": [22000, 20000, 17897, 15191]
+    "Receita": [10300, 14100, 17597, 14891]
 }
 df_revenue = pd.DataFrame(revenue_data)
 fig = px.line(df_revenue, x="Mês", y="Receita", markers=True, title="Receita por Mês")
