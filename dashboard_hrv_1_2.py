@@ -53,7 +53,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Dashboard HRV - Comparativo: Dezembro vs. Janeiro")
+st.title("Dashboard HRV - Dezembro vs. Janeiro")
 
 # =============================================================================
 # Dados dos Indicadores
