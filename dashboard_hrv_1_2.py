@@ -59,7 +59,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Dashboard HRV - Comparativo: Dezembro vs. Janeiro")
+st.title("Dashboard HRV - Dezembro vs. Janeiro")
 
 # =============================================================================
 # Dados dos Indicadores (KPIs)
@@ -163,7 +163,7 @@ def tooltip_html(text):
 # =============================================================================
 # Exibição dos Cards com KPIs e Tooltip ao lado do nome do indicador
 # =============================================================================
-st.markdown("### Principais Indicadores")
+st.markdown("### Indicadores Financeiros")
 
 num_cols = 4
 cols = st.columns(num_cols)
