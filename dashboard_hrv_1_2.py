@@ -54,7 +54,7 @@ st.markdown("""
         }
         /* Contêiner para título com tooltip: reduz o espaçamento entre o título e o st.metric */
         .indicator-container {
-            margin-bottom: -10px;
+            margin-bottom: -40px;
         }
     </style>
 """, unsafe_allow_html=True)
