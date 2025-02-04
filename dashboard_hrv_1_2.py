@@ -167,9 +167,7 @@ for i, metric in enumerate(metrics):
         # Monta o título com o nome do indicador e o tooltip imediatamente ao lado, sem espaço extra
         title_html = f"<span style='font-weight:bold;'>{metric['name']}</span>{tooltip_html(metric['explanation'])}"
         st.markdown(title_html, unsafe_allow_html=True)
-        # Adiciona um elemento para reduzir o espaçamento entre o título e o st.metric
-        st.markdown("<div style='margin-top: -0px;'></div>", unsafe_allow_html=True)
-        
+         
         # Formata os valores e a variação:
         if metric["name"] == "% Custo Asaas":
             value_str = f"{metric['jan']:.2f}%"
