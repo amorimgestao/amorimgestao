@@ -6,7 +6,7 @@ import pandas as pd
 # =============================================================================
 st.set_page_config(page_title="Dashboard HRV", layout="wide", page_icon=":bar_chart:")
 
-# CSS customizado: fundo branco, visual limpo, tooltip com fonte de 9px
+# CSS customizado: fundo branco, visual limpo, tooltip com fonte de 9px e redução de margem do st.metric
 st.markdown("""
     <style>
         body {
@@ -50,10 +50,14 @@ st.markdown("""
             visibility: visible;
             opacity: 1;
         }
+        /* Reduz o espaçamento entre o título e o st.metric */
+        [data-testid="stMetric"] {
+            margin-top: -10px;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Dashboard HRV - Dezembro vs. Janeiro")
+st.title("Dashboard HRV - Comparativo: Dezembro vs. Janeiro")
 
 # =============================================================================
 # Dados dos Indicadores
@@ -63,7 +67,7 @@ st.title("Dashboard HRV - Dezembro vs. Janeiro")
 # - "jan": valor de Janeiro (valor atual)
 # - "delta_val": variação em reais (Janeiro - Dezembro)
 # - "delta_perc": variação percentual (quando aplicável)
-# - "type": "revenue" para indicadores em que aumento é bom; "cost" para indicadores em que redução é boa
+# - "type": "revenue" para indicadores onde aumento é bom; "cost" para indicadores onde redução é boa
 # - "explanation": breve explicação para leigos
 # Observação: "Custo por Cliente" foi corrigido para R$ 205,45 em Janeiro. Em Dezembro, era R$ 205,45 + R$ 76,99 = R$ 282,44.
 metrics = [
@@ -167,8 +171,6 @@ for i, metric in enumerate(metrics):
         # Monta o título com o nome do indicador e o tooltip imediatamente ao lado, sem espaço extra
         title_html = f"<span style='font-weight:bold;'>{metric['name']}</span>{tooltip_html(metric['explanation'])}"
         st.markdown(title_html, unsafe_allow_html=True)
-        # Adiciona um elemento para reduzir o espaçamento entre o título e o st.metric
-        st.markdown("<div style='margin-top: -10px;'></div>", unsafe_allow_html=True)
         
         # Formata os valores e a variação:
         if metric["name"] == "% Custo Asaas":
@@ -185,10 +187,9 @@ for i, metric in enumerate(metrics):
             delta_display = f"{'-' if metric['delta_val'] < 0 else '+'}{delta_str}"
         
         # Define a lógica de cores:
-        if metric["type"] == "revenue":
-            delta_color = "normal"
-        else:
-            delta_color = "inverse"
+        # Para "revenue": aumento (delta positivo) é bom (verde) → delta_color="normal"
+        # Para "cost": redução (delta negativo) é bom (verde) → delta_color="inverse"
+        delta_color = "normal" if metric["type"] == "revenue" else "inverse"
         
         st.metric(label="", value=value_str, delta=delta_display, delta_color=delta_color)
 
