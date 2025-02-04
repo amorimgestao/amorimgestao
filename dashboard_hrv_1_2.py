@@ -52,7 +52,7 @@ st.markdown("""
         }
         /* Reduz o espaçamento entre o título e o st.metric */
         [data-testid="stMetric"] {
-            margin-top: -20px;
+            margin-top: -25px;
         }
     </style>
 """, unsafe_allow_html=True)
